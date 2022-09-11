@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LngLatBounds, LngLatLike, Map, Marker, Popup } from 'mapbox-gl';
+import { AnySourceData, LngLatBounds, LngLatLike, Map, Marker, Popup } from 'mapbox-gl';
 import { DirectionsApiClient } from '../api/directionsApiClient';
 import { DirectionsResponse, Route } from '../interfaces/directions';
 import { Feature } from '../interfaces/places';
@@ -73,10 +73,10 @@ export class MapsService {
   }
 
   getRouteBetweenPoints(start: [number, number], end: [number, number]){
-    this.directionsApi.get<DirectionsResponse>(`/${start.join(',')};${end.join(',')}`, {})
+    this.directionsApi.get<DirectionsResponse>(`/${start.join(',')};${end.join(',')}`)
       .subscribe(resp => {
         this.drawPolyLine(resp.routes[0]);
-      }, err => {})
+      }, err => {console.log(err)})
   }
 
   private drawPolyLine(route: Route) {
@@ -94,6 +94,42 @@ export class MapsService {
       padding: 200
     })
 
-    //
+    //  Polyline
+    const sourceData: AnySourceData = {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: coords
+            }
+          }
+        ]
+      }
+    }
+
+    //  TO DO: Limpiar ruta previa
+    if (this.map.getLayer('RouteString')) {
+      this.map.removeLayer('RouteString');
+      this.map.removeSource('RouteString');
+    }
+    this.map.addSource('RouteString', sourceData);
+    this.map.addLayer({
+      id: 'RouteString',
+      type: 'line',
+      source: 'RouteString',
+      layout: {
+        'line-cap': 'round',
+        'line-join': 'round'
+      },
+      paint: {
+        'line-color': 'black',
+        'line-width': 3
+      }
+    });
   }
 }

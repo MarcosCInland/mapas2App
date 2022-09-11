@@ -53,4 +53,8 @@ export class PlacesService {
       this.isLoadingPlaces = false;
     }, err => {} );
   }
+
+  deletePlaces(){
+    this.places = [];
+  }
 }

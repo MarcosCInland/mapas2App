@@ -14,21 +14,16 @@ export class DirectionsApiClient extends HttpClient {
         super(handler)
     }
 
-    public override get<T>(url: string, options: {
-        params?: HttpParams | {
-            [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
-        }
-    }){
+    public override get<T>(url: string){
         url = this.baseUrl+url;
         return super.get<T>(url, {
             params: {
-                alternavives: false,
+                alternatives: false,
                 geometries: 'geojson',
                 language: 'es',
                 overview: 'simplified',
                 steps: false,
-                access_token: environment.apiKey,
-                ...options.params
+                access_token: environment.navigationApiKey
             }
         });
     }
