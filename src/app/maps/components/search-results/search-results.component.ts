@@ -31,4 +31,13 @@ export class SearchResultsComponent implements OnInit {
     this.mapService.flyTo([lng, lat]);
   }
 
+  getDirections(place: Feature){
+    if (!this.placesService.userLocation) {
+      throw new Error("No hay user location");
+    }
+    const start = this.placesService.userLocation;
+    const end = place.center as [number, number];
+    this.mapService.getRouteBetweenPoints(start, end)
+  }
+
 }
