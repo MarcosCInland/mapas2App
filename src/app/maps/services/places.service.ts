@@ -34,7 +34,11 @@ export class PlacesService {
   }
 
   getPlacesByQuery(query: string) {
-    //to do: evaluar si query = empty string
+    if (query.length === 0) {
+      this.isLoadingPlaces = false;
+      this.places = [];
+      return;
+    }
     this.isLoadingPlaces = true;
 
     this.placesApi.get<PlacesResponse>(`/${query}.json`, {
